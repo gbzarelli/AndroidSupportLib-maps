@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">AndroidSupportLibAds</string>
+
+    <string name="start_point">Start point</string>
+    <string name="end_point">End point</string>
+
+    <string name="tipo_mapa">Selecione o tipo do mapa</string>
+    <string name="map_type_road">Normal</string>
+    <string name="map_type_hybrid">Hibrido</string>
+    <string name="map_type_satellite">Satelite</string>
+    <string name="map_type_terrain">Terreno</string>
+</resources>
