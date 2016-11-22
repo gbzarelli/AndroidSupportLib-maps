@@ -27,11 +27,14 @@ Step 3. Configure your project
       android:value="@string/google_maps_key" />
   
   Configure your Google Maps key:
-    <resources>
-      <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">
-          xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-      </string>
-    </resources>
+    
+    <![CDATA[
+	    <resources>
+	      <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">
+		  xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+	      </string>
+	    </resources>
+    ]]>
     
 Questions/Help: https://developers.google.com/maps/documentation/android/start#get-key
      
