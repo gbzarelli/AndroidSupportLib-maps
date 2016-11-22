@@ -1,5 +1,5 @@
 # AndroidSupportLib-maps
-Library developed to assist in the development of Android applications with Google Maps API, with several classes and helper methods.
+Library developed to assist in the development of Android applications with Google Maps API, with several classes and helper methods. This project uses the AndroidSupportLib library.
 
 How to use AndroidSupportLib-maps in your Android Project:
 
