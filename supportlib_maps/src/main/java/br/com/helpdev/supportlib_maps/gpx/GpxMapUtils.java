@@ -8,6 +8,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolygonOptions;
 
@@ -39,11 +40,16 @@ public class GpxMapUtils {
         }
         googleMap.clear();
 
-        addSimplePoint(googleMap, context.getString(R.string.start_point), R.drawable.home, polygonOptions.getPoints().get(0));
-        addSimplePoint(googleMap, context.getString(R.string.end_point), R.drawable.flag_checkered, polygonOptions.getPoints().get(polygonOptions.getPoints().size() - 1));
+        addSimplePoint(googleMap, context.getString(R.string.gpx_start_point), R.drawable.home, polygonOptions.getPoints().get(0));
+        addSimplePoint(googleMap, context.getString(R.string.gpx_end_point), R.drawable.flag_checkered, polygonOptions.getPoints().get(polygonOptions.getPoints().size() - 1));
 
         googleMap.addPolygon(polygonOptions);
-        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(polygonOptions.getPoints().get(0), 15f));
+
+        LatLngBounds.Builder builder = new LatLngBounds.Builder();
+        for (LatLng latLng : polygonOptions.getPoints()) {
+            builder.include(latLng);
+        }
+        googleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(builder.build(), 20));
     }
 
     public static Gpx loadGpxFile(File file) throws Exception {
