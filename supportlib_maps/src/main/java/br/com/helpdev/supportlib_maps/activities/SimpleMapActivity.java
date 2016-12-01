@@ -6,6 +6,7 @@ import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.widget.Button;
@@ -14,10 +15,16 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
+
+import java.util.List;
 
 import br.com.helpdev.supportlib_maps.R;
 
@@ -116,8 +123,9 @@ public abstract class SimpleMapActivity extends AppCompatLocation implements OnM
         map = googleMap;
         setUpMap();
         if (getGoogleApiClient().isConnected()) {
-            onMyLocationButtonClick();
+            goToMyLocation();
         }
+        onMapReady();
     }
 
     protected void setUpMap() {
@@ -132,11 +140,15 @@ public abstract class SimpleMapActivity extends AppCompatLocation implements OnM
 
     @Override
     public void onConnectedLocation() {
-        onMyLocationButtonClick();
+        goToMyLocation();
     }
 
     @Override
-    public boolean onMyLocationButtonClick() throws SecurityException {
+    public boolean onMyLocationButtonClick() {
+        return goToMyLocation();
+    }
+
+    public boolean goToMyLocation() {
         Location location = getLastLocation();
         if (location == null)
             return false;
@@ -162,8 +174,11 @@ public abstract class SimpleMapActivity extends AppCompatLocation implements OnM
         goToPoint(latLng, 17.0f);
     }
 
+    protected Marker addMarker(MarkerOptions markerOptions) {
+        return map.addMarker(markerOptions);
+    }
 
-    protected void addSimplePoint(String title, int resIdIcon, LatLng position) {
+    protected void addSimpleMarker(String title, int resIdIcon, LatLng position) {
         MarkerOptions point = new MarkerOptions();
         point.position(position);
         point.title(title);
@@ -171,8 +186,24 @@ public abstract class SimpleMapActivity extends AppCompatLocation implements OnM
         getMap().addMarker(point);
     }
 
+    public Polyline traceRoute(List<LatLng> locations, int resIdColor) {
+        PolylineOptions polygonOptions = new PolylineOptions();
+        polygonOptions.color(ContextCompat.getColor(this, resIdColor));
+        polygonOptions.addAll(locations);
+        return map.addPolyline(polygonOptions);
+    }
+
+    public void clearMap() {
+        map.clear();
+    }
+
+    public BitmapDescriptor getIconMarker() {
+        return BitmapDescriptorFactory.fromResource(R.drawable.marked);
+    }
+
     public GoogleMap getMap() {
         return map;
     }
 
+    protected abstract void onMapReady();
 }

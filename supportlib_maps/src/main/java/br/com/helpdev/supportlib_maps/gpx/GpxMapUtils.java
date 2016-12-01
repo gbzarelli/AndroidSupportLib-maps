@@ -9,8 +9,9 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.PolygonOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
 
 import org.simpleframework.xml.core.Persister;
 
@@ -28,9 +29,9 @@ import br.com.helpdev.supportlib_maps.gpx.objetos.TrkPt;
 
 public class GpxMapUtils {
 
-    public static void loadGpxOnMap(Context context, GoogleMap googleMap, Gpx gpx) {
-        PolygonOptions polygonOptions = new PolygonOptions();
-        polygonOptions.strokeColor(ContextCompat.getColor(context, R.color.colorPrimary));
+    public static ObGpxMap loadGpxOnMap(Context context, GoogleMap googleMap, Gpx gpx) {
+        PolylineOptions polygonOptions = new PolylineOptions();
+        polygonOptions.color(ContextCompat.getColor(context, R.color.colorPrimary));
         for (TrkPt tr : gpx.getTrk().getTrkseg().getTrkPts()) {
             try {
                 LatLng ll = new LatLng(Double.valueOf(tr.getLat()), Double.valueOf(tr.getLon()));
@@ -38,18 +39,17 @@ public class GpxMapUtils {
             } catch (Throwable t) {
             }
         }
-        googleMap.clear();
-
-        addSimplePoint(googleMap, context.getString(R.string.gpx_start_point), R.drawable.home, polygonOptions.getPoints().get(0));
-        addSimplePoint(googleMap, context.getString(R.string.gpx_end_point), R.drawable.flag_checkered, polygonOptions.getPoints().get(polygonOptions.getPoints().size() - 1));
-
-        googleMap.addPolygon(polygonOptions);
 
         LatLngBounds.Builder builder = new LatLngBounds.Builder();
         for (LatLng latLng : polygonOptions.getPoints()) {
             builder.include(latLng);
         }
         googleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(builder.build(), 20));
+
+        return new ObGpxMap(googleMap.addPolyline(polygonOptions),
+                addSimplePoint(googleMap, context.getString(R.string.gpx_start_point), R.drawable.home, polygonOptions.getPoints().get(0)),
+                addSimplePoint(googleMap, context.getString(R.string.gpx_end_point), R.drawable.flag_checkered, polygonOptions.getPoints().get(polygonOptions.getPoints().size() - 1))
+        );
     }
 
     public static Gpx loadGpxFile(File file) throws Exception {
@@ -61,12 +61,12 @@ public class GpxMapUtils {
         return gpxFile;
     }
 
-    protected static void addSimplePoint(GoogleMap googleMap, String title, int resIdIcon, LatLng position) {
+    protected static Marker addSimplePoint(GoogleMap googleMap, String title, int resIdIcon, LatLng position) {
         MarkerOptions point = new MarkerOptions();
         point.position(position);
         point.title(title);
         point.icon(BitmapDescriptorFactory.fromResource(resIdIcon));
-        googleMap.addMarker(point);
+        return googleMap.addMarker(point);
     }
 
     public interface LoadGpxAsyncCallback {
@@ -74,7 +74,7 @@ public class GpxMapUtils {
 
         void gpxLoadError(Throwable t);
 
-        void gpxLoadSucess();
+        void gpxLoadSucess(Gpx gpx, ObGpxMap polyline);
     }
 
     public static void loadGpxAsync(final AppCompatActivity activity, final GoogleMap googleMap, final File file, final LoadGpxAsyncCallback loadGpxAsyncCallback) {
@@ -88,8 +88,8 @@ public class GpxMapUtils {
                     activity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            GpxMapUtils.loadGpxOnMap(activity, googleMap, gpx);
-                            loadGpxAsyncCallback.gpxLoadSucess();
+                            ObGpxMap polyline = GpxMapUtils.loadGpxOnMap(activity, googleMap, gpx);
+                            loadGpxAsyncCallback.gpxLoadSucess(gpx, polyline);
                         }
                     });
                 } catch (final Throwable t) {
