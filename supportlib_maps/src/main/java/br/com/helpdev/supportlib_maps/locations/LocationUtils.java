@@ -133,8 +133,9 @@ public class LocationUtils implements GoogleApiClient.ConnectionCallbacks, Googl
                     .addApi(LocationServices.API)
                     .build();
         }
-        if (!mGoogleApiClient.isConnected()) {
-            System.out.println("try connect");
+        if (mGoogleApiClient.isConnected()) {
+            onConnected(null);
+        } else {
             mGoogleApiClient.connect();
         }
 
@@ -154,9 +155,7 @@ public class LocationUtils implements GoogleApiClient.ConnectionCallbacks, Googl
             connectionCallback.onConnectFailed(connectionResult);
             connectionCallback = null;
         }
-
     }
-
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
