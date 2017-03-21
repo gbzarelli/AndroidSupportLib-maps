@@ -10,7 +10,7 @@ android {
         minSdkVersion 14
         targetSdkVersion 24
         versionCode 1
-        versionName "1.0"
+        versionName "1.0.2"
     }
     buildTypes {
         release {
@@ -22,9 +22,8 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.github.helpdeveloper:AndroidSupportLib:1.2.4'
-    compile 'com.google.android.gms:play-services-maps:9.6.1'
-    compile 'com.google.android.gms:play-services-location:9.6.1'
+    compile 'com.github.helpdeveloper:AndroidSupportLib-locations:1.0.0'
+    compile 'com.google.android.gms:play-services-maps:10.0.1'
     compile('org.simpleframework:simple-xml:2.7.1') {
         exclude group: 'stax', module: 'stax-api'
         exclude group: 'xpp3', module: 'xpp3'

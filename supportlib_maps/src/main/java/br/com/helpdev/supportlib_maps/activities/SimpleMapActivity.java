@@ -26,6 +26,7 @@ import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.util.List;
 
+import br.com.helpdev.supportlib_locations.activities.AppCompatLocation;
 import br.com.helpdev.supportlib_maps.R;
 
 /**
