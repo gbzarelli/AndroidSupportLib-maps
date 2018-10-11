@@ -1,6 +1,7 @@
 package br.com.helpdev.supportlib_maps.gpx;
 
 import android.content.Context;
+import android.location.Location;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 
@@ -17,11 +18,19 @@ import org.simpleframework.xml.core.Persister;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.TimeZone;
 
 import br.com.helpdev.supportlib.utils.ThisObjects;
 import br.com.helpdev.supportlib_maps.R;
 import br.com.helpdev.supportlib_maps.gpx.objetos.Gpx;
+import br.com.helpdev.supportlib_maps.gpx.objetos.MetaData;
+import br.com.helpdev.supportlib_maps.gpx.objetos.Trk;
 import br.com.helpdev.supportlib_maps.gpx.objetos.TrkPt;
+import br.com.helpdev.supportlib_maps.gpx.objetos.TrkSeg;
 
 /**
  * Created by Guilherme Biff Zarelli on 17/11/16.
@@ -50,6 +59,36 @@ public class GpxMapUtils {
                 addSimplePoint(googleMap, context.getString(R.string.gpx_start_point), R.drawable.home, polygonOptions.getPoints().get(0)),
                 addSimplePoint(googleMap, context.getString(R.string.gpx_end_point), R.drawable.flag_checkered, polygonOptions.getPoints().get(polygonOptions.getPoints().size() - 1))
         );
+    }
+
+    public static Gpx createGpx(String nameCreator, String nameFile, List<Location> locationList) {
+        Gpx gpx = new Gpx(nameCreator);
+        MetaData metaData = new MetaData();
+        metaData.setTime(getUtcGpxTime(locationList.get(0).getTime()));
+        Trk trk = new Trk();
+        trk.setName(nameFile);
+        TrkSeg trkSeg = new TrkSeg();
+        ArrayList<TrkPt> trkPtArrayList = new ArrayList<>();
+        for (Location loc : locationList) {
+            TrkPt trkPt = new TrkPt();
+            trkPt.setLat(loc.getLatitude());
+            trkPt.setLon(loc.getLongitude());
+            trkPt.setEle(loc.getAltitude());
+            trkPt.setTime(getUtcGpxTime(loc.getTime()));
+            trkPtArrayList.add(trkPt);
+        }
+
+        trkSeg.setTrkPts(trkPtArrayList);
+        trk.setTrkseg(trkSeg);
+        gpx.setTrk(trk);
+        gpx.setMetaData(metaData);
+        return gpx;
+    }
+
+    private static String getUtcGpxTime(long data) {//2017-04-11T09:02:40Z
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+        return sdf.format(new Date(data));
     }
 
     public static Gpx loadGpxFile(File file) throws Exception {

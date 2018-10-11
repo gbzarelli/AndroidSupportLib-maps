@@ -13,8 +13,14 @@ import org.simpleframework.xml.Root;
  */
 @Root(name = "elements")
 public class Extensions {
+    public Extensions() {
+    }
 
-    @Element(name = "TrackPointExtension", type = TrackPointExtension.class)
+    public Extensions(TrackPointExtension trackPointExtension) {
+        this.trackPointExtension = trackPointExtension;
+    }
+
+    @Element(name = "gpxtpx:TrackPointExtension", type = TrackPointExtension.class)
     private TrackPointExtension trackPointExtension;
 
     public TrackPointExtension getTrackPointExtension() {

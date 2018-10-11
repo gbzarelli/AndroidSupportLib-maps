@@ -12,7 +12,7 @@ import org.simpleframework.xml.Root;
 /**
  * @author Guilherme
  */
-@Root(name = "trkpt")
+@Root(name = "trkpt", strict = false)
 public class TrkPt {
 
     @Attribute(name = "lat")
@@ -20,33 +20,55 @@ public class TrkPt {
     @Attribute(name = "lon")
     private String lon;
     @Element(name = "ele")
-    private String ele;
+    private double ele;
     @Element(name = "time")
     private String time;
     @Element(name = "extensions", type = Extensions.class, required = false)
     private Extensions extensions;
 
+    private double latitude;
+    private double longitude;
+    private double accuracy;
+
+    public double getAccuracy() {
+        return accuracy;
+    }
+
+    public void setAccuracy(double accuracy) {
+        this.accuracy = accuracy;
+    }
+
     public String getLat() {
         return lat;
     }
 
-    public void setLat(String lat) {
-        this.lat = lat;
+    public void setLat(double lat) {
+        this.latitude = lat;
+        this.lat = String.valueOf(lat);
     }
 
     public String getLon() {
         return lon;
     }
 
-    public void setLon(String lon) {
-        this.lon = lon;
+    public double getLatitude() {
+        return latitude;
     }
 
-    public String getEle() {
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLon(double lon) {
+        this.longitude = lon;
+        this.lon = String.valueOf(lon);
+    }
+
+    public double getEle() {
         return ele;
     }
 
-    public void setEle(String ele) {
+    public void setEle(double ele) {
         this.ele = ele;
     }
 

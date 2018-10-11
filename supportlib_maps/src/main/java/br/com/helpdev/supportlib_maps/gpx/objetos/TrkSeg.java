@@ -5,9 +5,12 @@
  */
 package br.com.helpdev.supportlib_maps.gpx.objetos;
 
+import android.location.Location;
+
 import org.simpleframework.xml.ElementList;
 import org.simpleframework.xml.Root;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -15,6 +18,10 @@ import java.util.List;
  */
 @Root(name = "trkseg")
 public class TrkSeg {
+
+    public TrkSeg() {
+        trkPts = new ArrayList<>();
+    }
 
     @ElementList(name = "trkpt",
             type = TrkPt.class,
@@ -35,4 +42,30 @@ public class TrkSeg {
         return "TrkSeg{" + "trkPts=" + trkPts + '}';
     }
 
+    public void addTrkPt(TrkPt trkPt) {
+        trkPts.add(trkPt);
+    }
+
+    public void addTrkPts(List<Location> tempLocation) {
+        for (Location loc : tempLocation) {
+            addTrkPt(loc);
+        }
+    }
+
+    public void addTrkPt(Location loc) {
+        addTrkPt(loc, null);
+    }
+
+    public void addTrkPt(Location loc, TrackPointExtension trackPointExtension) {
+        TrkPt trkPt = new TrkPt();
+        trkPt.setLat(loc.getLatitude());
+        trkPt.setLon(loc.getLongitude());
+        trkPt.setEle(loc.getAltitude());
+        trkPt.setAccuracy(loc.getAccuracy());
+        trkPt.setTime(Gpx.getUtcGpxTime(loc.getTime()));
+        if (null != trackPointExtension) {
+            trkPt.setExtensions(new Extensions(trackPointExtension));
+        }
+        addTrkPt(trkPt);
+    }
 }

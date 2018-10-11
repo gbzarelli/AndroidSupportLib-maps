@@ -15,6 +15,10 @@ import org.simpleframework.xml.Root;
 @Root(name = "trk")
 public class Trk {
 
+    public Trk() {
+        trkseg = new TrkSeg();
+    }
+
     @Element(name = "name")
     private String name;
     @Element(name = "trkseg", type = TrkSeg.class)
